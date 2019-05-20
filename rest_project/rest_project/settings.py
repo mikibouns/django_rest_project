@@ -28,6 +28,8 @@ DEBUG = True
 ALLOWED_HOSTS = ['*']
 
 
+AUTH_USER_MODEL = 'auth_app.Users'
+
 # Application definition
 
 INSTALLED_APPS = [
@@ -42,6 +44,10 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework.authtoken',
     'djoser',
+
+    'auth_app',
+    'product_app',
+    'basket_app'
 ]
 
 MIDDLEWARE = [
