@@ -7,5 +7,8 @@ class Users(AbstractUser):
     fio = models.CharField(max_length=256, blank=True, null=True)
     address = models.CharField(max_length=256, blank=True, null=True)
 
+    class Meta:
+        ordering = ('id',)
+
     def __str__(self):
         return self.username
