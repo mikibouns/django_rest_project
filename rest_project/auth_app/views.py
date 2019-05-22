@@ -9,7 +9,7 @@ from .permissions import (
 
 
 class UserViewSet(viewsets.ModelViewSet):
-    permission_classes = [permissions.IsAuthenticated, IsOwnerOrReadOnly]
+    permission_classes = [IsOwnerOrReadOnly]
     queryset = get_user_model().objects.all().order_by('id')
     serializer_class = UsersSerializer
 
@@ -17,6 +17,9 @@ class UserViewSet(viewsets.ModelViewSet):
         queryset = self.filter_queryset(self.get_queryset())
         serializer = UsersSerializer(queryset, many=True)
         return Response(serializer.data)
+
+    def create(self, request, *args, **kwargs):
+        
 
     def perform_create(self, serializer):
         serializer.save(owner=self.request.user)
