@@ -25,6 +25,7 @@ try:
                 if j[0:2] != '__':
                     os.remove(os.path.join(i[0], j))
                     print('{} is removed'.format(j))
+    os.remove('db.sqlite3')
 except:
     print('Not found!')
 

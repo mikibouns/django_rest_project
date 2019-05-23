@@ -4,6 +4,6 @@ from . import views
 app_name = 'basket_app'
 
 urlpatterns = [
-    path('', views.basket),
+    path('', views.BasketViewSet.as_view()),
 
 ]
