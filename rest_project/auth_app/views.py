@@ -1,5 +1,6 @@
 from rest_framework import viewsets, permissions
 from django.http import Http404
+from django.shortcuts import get_object_or_404
 from .serializers import UsersSerializer, UsersCreateSerializer
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -50,13 +51,10 @@ class UserDetailViewSet(APIView):
 
     def get_object(self, request, pk):
         request_user = request.user
-        try:
-            user = get_user_model().objects.get(pk=pk)
-            if user == request_user or request_user.is_superuser:
-                return user
-            else:
-                raise Http404
-        except get_user_model().DoesNotExist:
+        user = get_object_or_404(get_user_model(), pk=pk)
+        if user == request_user or request_user.is_superuser:
+            return user
+        else:
             raise Http404
 
     def get(self, request, pk, format=None):

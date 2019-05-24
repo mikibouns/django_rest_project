@@ -8,7 +8,7 @@ class POSTOrNotForUsers(BasePermission):
         if request.user.is_authenticated:
             if request.method in ['GET', 'PUT', 'DELETE'] or request.user.is_superuser:
                 return True
-            self.message = 'You must be logout'
+            self.message = 'Method \"POST\" not allowed.'
             return False
         else:
             if request.method in ['POST']:
@@ -19,5 +19,3 @@ class POSTOrNotForUsers(BasePermission):
         if request.method in SAFE_METHODS:
             return True
         return obj == request.user or request.user.is_superuser
-
-

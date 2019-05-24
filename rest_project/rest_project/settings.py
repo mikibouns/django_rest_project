@@ -141,7 +141,7 @@ REST_FRAMEWORK = {
     #     'rest_framework.permissions.IsAdminUser',
     #     'rest_framework.permissions.AllowAny',
     # ),
-    'PAGE_SIZE': 10,
+    # 'PAGE_SIZE': 10,
     'DEFAULT_AUTHENTICATION_CLASSES': (
         # 'rest_framework_jwt.authentication.JSONWebTokenAuthentication',
         'rest_framework.authentication.TokenAuthentication',
@@ -150,8 +150,8 @@ REST_FRAMEWORK = {
     ),
     # 'EXCEPTION_HANDLER': 'rest_framework_json_api.exceptions.exception_handler',
     'EXCEPTION_HANDLER': 'utils.custom_exception_handler',
-    'DEFAULT_PAGINATION_CLASS':
-        'rest_framework_json_api.pagination.PageNumberPagination',
+    # 'DEFAULT_PAGINATION_CLASS':
+    #     'rest_framework_json_api.pagination.PageNumberPagination',
     'DEFAULT_PARSER_CLASSES': (
         'rest_framework_json_api.parsers.JSONParser',
         'rest_framework.parsers.FormParser',
@@ -162,11 +162,6 @@ REST_FRAMEWORK = {
         'rest_framework.renderers.BrowsableAPIRenderer',
     ),
     'DEFAULT_METADATA_CLASS': 'rest_framework_json_api.metadata.JSONAPIMetadata',
-}
-
-
-SIMPLE_JWT = {
-   'AUTH_HEADER_TYPES': ('JWT',),
 }
 
 CORS_ORIGIN_ALLOW_ALL = True

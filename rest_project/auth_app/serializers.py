@@ -20,9 +20,6 @@ class UsersSerializer(ModelSerializer):
     def get_user_id(self, obj):
         return str(obj.id)
 
-    def get_address(self, obj):
-        return str(obj.email)
-
 
 class UsersCreateSerializer(ModelSerializer):
 

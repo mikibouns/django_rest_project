@@ -59,7 +59,8 @@ def fill_products():
     for prod in roducts:
         data = {'name': prod,
                 'art': random.randint(123000, 999999),
-                'price': random.uniform(10.50, 200.50)}
+                'price': random.uniform(10.50, 200.50),
+                'quantity': random.randint(0, 12)}
         Products.objects.create(**data)
 
 
@@ -69,7 +70,7 @@ class Command(BaseCommand):
         get_user_model().objects.bulk_create(iter(users_iterator())) # создание пользователей
 
         # Создаем суперпользователя при помощи менеджера модели
-        super_user = get_user_model().objects.create_superuser('administ', 'administ@mail.com', 'Testtest123')
+        super_user = get_user_model().objects.create_superuser('administ', 'administ@mail.com', 'Testtest123', address='administ@mail.com')
 
         fill_products() # добавляем список продуктов
         for user in get_user_model().objects.all():
