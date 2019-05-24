@@ -19,9 +19,9 @@ class UsersSerializer(ModelSerializer):
         return str(obj.id)
 
     def get_basket(self, obj):
-        # data = BasketSerializer(obj.basket_children(), many=True).data
-        # if data:
-        #     return data
+        data = BasketSerializer().data
+        if data:
+            return data
         return None
 
 
