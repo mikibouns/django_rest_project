@@ -4,13 +4,14 @@ from rest_framework.serializers import (
     ModelSerializer,
     SerializerMethodField,
     HyperlinkedModelSerializer,
-    CharField
+    CharField,
+    EmailField,
+    ValidationError
 )
 
 
 class UsersSerializer(ModelSerializer):
     user_id = SerializerMethodField()
-    address = SerializerMethodField()
 
     class Meta:
         model = get_user_model()
@@ -24,11 +25,20 @@ class UsersSerializer(ModelSerializer):
 
 
 class UsersCreateSerializer(ModelSerializer):
+
     class Meta:
         model = get_user_model()
-        fields = ('username', 'email', 'password', 'fio')
+        fields = ('address', 'fio', 'password')
 
     def create(self, validated_data):
-        print(validated_data)
-        user = get_user_model().objects.create_user(**validated_data)
+        modifed_validated_data = {
+            'address': validated_data['address'],
+            'username': validated_data['address'],
+            'fio': validated_data['fio'],
+            'password': validated_data['password']
+        }
+        try:
+            user = get_user_model().objects.create_user(**modifed_validated_data)
+        except Exception as e:
+            raise ValidationError(e)
         return user

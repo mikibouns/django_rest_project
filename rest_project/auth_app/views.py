@@ -11,14 +11,13 @@ from rest_framework.decorators import permission_classes
 from django.contrib.auth import get_user_model
 
 from .permissions import (
-    WithOutPOSTForAuthUser,
-    OnlyPOSTForNoAuthUser
+    POSTOrNotForUsers
 )
 
 
 class UserListViewSet(APIView):
     '''список пользователей'''
-    permission_classes = [OnlyPOSTForNoAuthUser, WithOutPOSTForAuthUser, ]
+    permission_classes = [POSTOrNotForUsers, ]
 
     def get_object(self, request, format=None):
         if request.user.is_superuser: # если суперпользователь
@@ -32,14 +31,10 @@ class UserListViewSet(APIView):
         return Response(list(serializer.data))
 
     def post(self, request):
-        fields_dict = {'username': request.data['address'],
-                       'password': request.data['password'],
-                       'email': request.data['address'],
-                       'fio': request.data['fio']}
-        serializer = UsersCreateSerializer(data=fields_dict)
-        if serializer.is_valid():
+        serializer = UsersCreateSerializer(data=request.data)
+        if serializer.is_valid(raise_exception=True):
             serializer.save()
-            user = get_user_model().objects.get(username=serializer.data['username'])
+            user = get_user_model().objects.get(username=serializer.data['address'])
             return Response({'success': 1,
                              'user_id': user.id,
                              'token_auth': Token.objects.create(user=user).key}, status=status.HTTP_201_CREATED)
@@ -57,11 +52,10 @@ class UserDetailViewSet(APIView):
         request_user = request.user
         try:
             user = get_user_model().objects.get(pk=pk)
-            return user
-            # if user == request_user or request_user.is_superuser:
-            #     return user
-            # else:
-            #     raise Http404
+            if user == request_user or request_user.is_superuser:
+                return user
+            else:
+                raise Http404
         except get_user_model().DoesNotExist:
             raise Http404
 
