@@ -3,6 +3,7 @@ from django.contrib.auth import get_user_model
 from subprocess import call
 import os
 import random
+from rest_framework.authtoken.models import Token
 
 from product_app.models import Products
 
@@ -45,7 +46,7 @@ def users_iterator():
         username = 'email{}@mail.com'.format(i)
         user = get_user_model()(
             fio=name,
-            email=username,
+            address=username,
             username=username,
         )
         user.set_password('123')
@@ -71,3 +72,5 @@ class Command(BaseCommand):
         super_user = get_user_model().objects.create_superuser('administ', 'administ@mail.com', 'Testtest123')
 
         fill_products() # добавляем список продуктов
+        for user in get_user_model().objects.all():
+            Token.objects.create(user=user)

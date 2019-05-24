@@ -31,11 +31,12 @@ class UsersCreateSerializer(ModelSerializer):
         fields = ('address', 'fio', 'password')
 
     def create(self, validated_data):
+        '''создание пользователя'''
         modifed_validated_data = {
-            'address': validated_data['address'],
-            'username': validated_data['address'],
-            'fio': validated_data['fio'],
-            'password': validated_data['password']
+            'address': validated_data.get('address', None),
+            'username': validated_data.get('address', None),
+            'fio': validated_data.get('fio', None),
+            'password': validated_data.get('password', None)
         }
         try:
             user = get_user_model().objects.create_user(**modifed_validated_data)
@@ -43,3 +44,14 @@ class UsersCreateSerializer(ModelSerializer):
             print(str(e))
             raise ValidationError({'address': [str(e).split(':')[0], ]})
         return user
+
+    def update(self, instance, validated_data):
+        '''обновление пользователя'''
+        print(validated_data)
+        instance.address = validated_data.get('address', instance.address),
+        instance.username = validated_data.get('address', instance.username),
+        instance.fio = validated_data.get('fio', instance.fio),
+        if validated_data.get('password', False):
+            instance.set_password(validated_data.get('password'))
+        instance.save()
+        return instance

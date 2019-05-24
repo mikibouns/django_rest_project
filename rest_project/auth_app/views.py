@@ -65,8 +65,8 @@ class UserDetailViewSet(APIView):
         return Response(dict(serializer.data))
 
     def put(self, request, pk, format=None):
-        user = self.get_object(pk)
-        serializer = UsersSerializer(user, data=request.data)
+        user = self.get_object(request, pk)
+        serializer = UsersSerializer(user, data=request.data, partial=True)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)
