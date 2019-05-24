@@ -41,5 +41,5 @@ class UsersCreateSerializer(ModelSerializer):
             user = get_user_model().objects.create_user(**modifed_validated_data)
         except Exception as e:
             print(str(e))
-            raise ValidationError('{}: address'.format(str(e).split(':')[0]))
+            raise ValidationError({'address': [str(e).split(':')[0], ]})
         return user
