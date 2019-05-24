@@ -22,7 +22,7 @@ class UserListViewSet(APIView):
     def get_object(self, request, format=None):
         if request.user.is_superuser: # если суперпользователь
             return get_user_model().objects.all() # возвращаем весь список
-        else:
+        else: # если анонимный пользователь, вернет пустой список, если авторизованный: авторизованного пользователя
             return get_user_model().objects.filter(id=request.user.id)
 
     def get(self, request, format=None):
@@ -69,7 +69,7 @@ class UserDetailViewSet(APIView):
         serializer = UsersSerializer(user, data=request.data, partial=True)
         if serializer.is_valid():
             serializer.save()
-            return Response(serializer.data)
+            return Response(dict(serializer.data))
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def delete(self, request, pk, format=None):

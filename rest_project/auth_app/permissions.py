@@ -13,7 +13,6 @@ class POSTOrNotForUsers(BasePermission):
         else:
             if request.method in ['POST']:
                 return True
-            self.message = 'You must be login'
             return False
 
     def has_object_permission(self, request, view, obj):
