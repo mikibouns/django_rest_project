@@ -3,9 +3,6 @@ from basket_app.models import Basket
 from rest_framework.serializers import (
     ModelSerializer,
     SerializerMethodField,
-    HyperlinkedModelSerializer,
-    CharField,
-    EmailField,
     ValidationError
 )
 
@@ -44,7 +41,6 @@ class UsersCreateSerializer(ModelSerializer):
 
     def update(self, instance, validated_data):
         '''обновление пользователя'''
-        print(validated_data)
         instance.address = validated_data.get('address', instance.address),
         instance.username = validated_data.get('address', instance.username),
         instance.fio = validated_data.get('fio', instance.fio),

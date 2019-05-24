@@ -8,3 +8,4 @@ class IsAdminOrReadOnly(BasePermission):
         if request.method in ['GET'] or request.user.is_superuser:
             return True
         return False
+

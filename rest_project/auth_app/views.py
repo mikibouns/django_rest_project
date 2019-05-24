@@ -1,4 +1,3 @@
-from rest_framework import viewsets, permissions
 from django.http import Http404
 from django.shortcuts import get_object_or_404
 from .serializers import UsersSerializer, UsersCreateSerializer
@@ -7,7 +6,6 @@ from rest_framework.views import APIView
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.authtoken.models import Token
-from rest_framework.decorators import permission_classes
 
 from django.contrib.auth import get_user_model
 

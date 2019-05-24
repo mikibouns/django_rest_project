@@ -1,8 +1,6 @@
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework import status
-from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly, IsAdminUser
-from rest_framework import viewsets
 from django.shortcuts import get_object_or_404
 from .serializers import ProductsSerializer
 
@@ -30,14 +28,8 @@ class ProductsListViewSet(APIView):
     def post(self, request, format=None):
         serializer = ProductsSerializer(data=request.data)
         if serializer.is_valid():
-            product = serializer.save()
-            return Response(
-                {'success': 1,
-                 'art': product.art,
-                 'name': product.name,
-                 'quantity': product.quantity,
-                 'price': product.price}
-                , status=status.HTTP_201_CREATED)
+            serializer.save()
+            return Response(dict(serializer.data), status=status.HTTP_201_CREATED)
         return Response({'success': 0,
                          'expection': serializer._errors,
                          'message': 400}, status=status.HTTP_400_BAD_REQUEST)
@@ -56,3 +48,18 @@ class ProductsDetailViewSet(APIView):
 
     def post(self, request, *args, **kwargs):
         pass
+
+    def put(self, request, *args, **kwargs):
+        product = Products.objects.get(art=kwargs.get('art'))
+        serializer = ProductsSerializer(product, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(dict(serializer.data), status=status.HTTP_201_CREATED)
+        return Response({'success': 0,
+                         'expection': serializer._errors,
+                         'message': 400}, status=status.HTTP_400_BAD_REQUEST)
+
+    def delete(self, request, *args, **kwargs):
+        user = self.get_object(kwargs.get('art'))
+        user.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)

@@ -7,11 +7,8 @@ from rest_framework.serializers import (
 )
 
 
-class ProductsSerializer(HyperlinkedModelSerializer):
+class ProductsSerializer(ModelSerializer):
 
     class Meta:
         model = Products
         fields = ('art', 'name', 'price', 'quantity')
-
-    def create(self, validated_data):
-        return Products.objects.create(**validated_data)
