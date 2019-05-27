@@ -2,16 +2,17 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework import status
 from django.shortcuts import get_object_or_404
+# from rest_framework.permissions import IsAuthenticated
+
 from .serializers import ProductsSerializer
-
 from .models import Products
-
 from .permissions import (
     IsAdminOrReadOnly
 )
 
 
 class ProductsListViewSet(APIView):
+    '''список продукции'''
     permission_classes = [IsAdminOrReadOnly, ]
 
     def get_object(self, request, format=None):
@@ -36,6 +37,7 @@ class ProductsListViewSet(APIView):
 
 
 class ProductsDetailViewSet(APIView):
+    '''управление списком продукции, для обычных пользователей только чтение'''
     permission_classes = [IsAdminOrReadOnly]
 
     def get_object(self, art):
@@ -45,9 +47,6 @@ class ProductsDetailViewSet(APIView):
         product = self.get_object(kwargs.get('art'))
         serializer = ProductsSerializer(product)
         return Response(dict(serializer.data))
-
-    def post(self, request, *args, **kwargs):
-        pass
 
     def put(self, request, *args, **kwargs):
         product = Products.objects.get(art=kwargs.get('art'))
@@ -63,3 +62,6 @@ class ProductsDetailViewSet(APIView):
         user = self.get_object(kwargs.get('art'))
         user.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+

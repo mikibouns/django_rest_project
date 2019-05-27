@@ -1,5 +1,4 @@
 from django.contrib.auth import get_user_model
-from basket_app.serializers import BasketSerializer
 from rest_framework.serializers import (
     ModelSerializer,
     SerializerMethodField,
@@ -9,20 +8,13 @@ from rest_framework.serializers import (
 
 class UsersSerializer(ModelSerializer):
     user_id = SerializerMethodField()
-    basket = SerializerMethodField()
 
     class Meta:
         model = get_user_model()
-        fields = ('user_id', 'address', 'fio', 'basket')
+        fields = ('user_id', 'address', 'fio')
 
     def get_user_id(self, obj):
         return str(obj.id)
-
-    def get_basket(self, obj):
-        data = BasketSerializer().data
-        if data:
-            return data
-        return None
 
 
 class UsersCreateSerializer(ModelSerializer):
