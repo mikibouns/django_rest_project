@@ -23,6 +23,13 @@ class ProductListSerializer(ModelSerializer):
         return str(obj.product.art)
 
 
+class UpdateBasketSerializer(ModelSerializer):
+
+    class Meta:
+        model = ProductList
+        fields = ('id', 'quantity')
+
+
 class BasketSerializer(ModelSerializer):
     products = SerializerMethodField()
     basket_id = SerializerMethodField()
@@ -45,17 +52,15 @@ class AddToBasketSerializer(ModelSerializer):
 
     class Meta:
         model = ProductList
-        fields = ('basket', 'product', 'quantity')
+        fields = ('product', 'quantity')
 
     def create(self, validated_data):
         validated_data['basket'] = self.context.get('basket')
-        print(validated_data)
         try:
             ProductList.objects.get(product=validated_data.get('product'))
             raise ValidationError({'product': ['product {} already exists in the basket'.format(validated_data.get('product').art)]})
-        except Basket.DoesNotExist:
-            purchase = Basket.objects.create(**validated_data)
-            return purchase
-
-    def get_user(self, obj):
-        return str(obj.request.user.id)
+        except ProductList.DoesNotExist:
+            if ProductList.quantity_calculation(product=validated_data.get('product'), quantity=abs(validated_data.get('quantity', 1))):
+                purchase = ProductList.objects.create(**validated_data)
+                return purchase
+            raise ValidationError({'quantity': 'not enough products in stock, check product availability'})

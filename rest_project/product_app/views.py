@@ -19,7 +19,7 @@ class ProductsListViewSet(APIView):
         if request.user.is_superuser: # если суперпользователь
             return Products.objects.all() # возвращаем весь список
         else: # если пользователь не администратор показать товар который есть в наличии
-            return Products.objects.exclude(quantity=0).order_by('id')
+            return Products.objects.exclude(quantity=0).order_by('art')
 
     def get(self, request, format=None):
         products = self.get_object(request)

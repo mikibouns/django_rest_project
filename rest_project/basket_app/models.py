@@ -23,3 +23,11 @@ class ProductList(models.Model):
     def __str__(self):
         return str(self.product.name)
 
+    @staticmethod
+    def quantity_calculation(product, quantity):
+        if quantity > 0 and product.quantity >= quantity or quantity < 0:
+            product.quantity -= quantity
+            product.save()
+            return True
+        else:
+            return False
