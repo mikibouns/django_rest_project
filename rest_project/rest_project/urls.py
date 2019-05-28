@@ -20,7 +20,7 @@ from django.conf.urls.static import static
 from rest_framework.authtoken import views as auth_token
 
 urlpatterns = [
-    # path('api/v1/', include(router.urls)),
+    path('api/v1/', include('main_app.urls', namespace='main_app')),
     path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
     path('admin/', admin.site.urls),
     # path('schema/', schema_view, name='schema'),

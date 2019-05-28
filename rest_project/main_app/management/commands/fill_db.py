@@ -60,8 +60,10 @@ def fill_products():
         data = {'name': prod,
                 'art': random.randint(123000, 999999),
                 'price': random.uniform(10.50, 200.50),
-                'quantity': random.randint(0, 12)}
+                'quantity': random.randint(0, 40)}
+
         Products.objects.create(**data)
+    Products.objects.create(name='Малина', art=111111, price=325.50, quantity=100)
 
 
 class Command(BaseCommand):
