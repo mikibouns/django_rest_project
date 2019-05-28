@@ -1,13 +1,12 @@
 from django.http import Http404
 from django.shortcuts import get_object_or_404
-from django.utils.datastructures import MultiValueDictKeyError
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from rest_framework import status
 
 from .models import Basket, ProductList
-from .serializers import BasketSerializer, AddToBasketSerializer, ProductListSerializer, UpdateBasketSerializer
+from .serializers import BasketSerializer, AddToBasketSerializer, ProductListSerializer
 
 
 class BasketListViewSet(APIView):
@@ -21,7 +20,7 @@ class BasketListViewSet(APIView):
             return Basket.objects.filter(user_id=self.request.user)
 
     def get(self, request, *args, **kwargs):
-        basket = self.get_object(request)
+        basket = self.get_object()
         serializer = BasketSerializer(basket, many=True)
         return Response(list(serializer.data))
 
@@ -66,7 +65,7 @@ class BasketDetailViewSet(APIView):
                 return Response({'success': 0,
                                  'expection': 'product id={} does not exist'.format(self.request.data['id']),
                                  'message': 400}, status=status.HTTP_400_BAD_REQUEST)
-            serialiser = UpdateBasketSerializer(instance, self.request.data, partial=True)
+            serialiser = ProductListSerializer(instance, self.request.data, partial=True)
             if serialiser.is_valid():
                 serialiser.save()
                 return Response(dict(serialiser.data))

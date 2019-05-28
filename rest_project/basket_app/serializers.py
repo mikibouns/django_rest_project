@@ -21,17 +21,14 @@ class ProductListSerializer(ModelSerializer):
     def get_product_art(self, obj):
         return str(obj.product.art)
 
-
-class UpdateBasketSerializer(ModelSerializer):
-
-    class Meta:
-        model = ProductList
-        fields = ('id', 'quantity')
-
     def update(self, instance, validated_data):
-        print(validated_data)
+        quantity = validated_data.get('quantity', None)
+        if quantity:
+            remain = quantity - instance.quantity
+            instance.quantity = quantity
+            if ProductList.quantity_calculation(product=instance.product, quantity=remain):
+                instance.save()
         return instance
-
 
 
 class BasketSerializer(ModelSerializer):
@@ -60,8 +57,9 @@ class AddToBasketSerializer(ModelSerializer):
 
     def create(self, validated_data):
         validated_data['basket'] = self.context.get('basket')
+        print(validated_data)
         try:
-            ProductList.objects.get(product=validated_data.get('product'))
+            ProductList.objects.filter(basket=validated_data.get('basket')).get(product=validated_data.get('product'))
             raise ValidationError({'product': ['product {} already exists in the basket'.format(validated_data.get('product').art)]})
         except ProductList.DoesNotExist:
             if ProductList.quantity_calculation(product=validated_data.get('product'), quantity=abs(validated_data.get('quantity', 1))):
