@@ -17,7 +17,7 @@ User = get_user_model()
 
 
 class UserListViewSet(APIView):
-    '''список пользователей'''
+    '''Упревление пользователями'''
     permission_classes = [POSTOrNotForUsers, ]
 
     def get_object(self, request, format=None):
@@ -27,11 +27,13 @@ class UserListViewSet(APIView):
             return User.objects.filter(id=request.user.id)
 
     def get(self, request, format=None):
+        '''Получить список пользователей'''
         users = self.get_object(request)
         serializer = UsersSerializer(users, many=True)
         return Response(list(serializer.data))
 
     def post(self, request):
+        '''Создать пользователя'''
         serializer = UsersCreateSerializer(data=request.data)
         if serializer.is_valid(raise_exception=True):
             serializer.save()
@@ -46,7 +48,7 @@ class UserListViewSet(APIView):
 
 
 class UserDetailViewSet(APIView):
-    '''детализация по пользователю'''
+    '''Управление пользователем'''
     permission_classes = [IsAuthenticated, ]
 
     def get_object(self, request, pk):
@@ -58,11 +60,13 @@ class UserDetailViewSet(APIView):
             raise Http404
 
     def get(self, request, pk, format=None):
+        '''Получить детализацию по пользователю'''
         user = self.get_object(request, pk)
         serializer = UsersSerializer(user)
         return Response(dict(serializer.data))
 
     def put(self, request, pk, format=None):
+        '''Изменить пользователя'''
         user = self.get_object(request, pk)
         serializer = UsersSerializer(user, data=request.data, partial=True)
         if serializer.is_valid():
@@ -71,6 +75,7 @@ class UserDetailViewSet(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def delete(self, request, pk, format=None):
+        '''Удалить пользователя'''
         user = self.get_object(request, pk)
         user.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)

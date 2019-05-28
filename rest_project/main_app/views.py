@@ -4,8 +4,9 @@ from rest_framework.reverse import reverse
 
 
 class APIRootView(APIView):
-
+    '''Корень API'''
     def get(self, request):
+        '''Получить корень API'''
         data = [
             {
                 'api_url': request.build_absolute_uri(),

@@ -10,7 +10,7 @@ from .serializers import BasketSerializer, AddToBasketSerializer, ProductListSer
 
 
 class BasketListViewSet(APIView):
-    '''список корзин пользователей'''
+    '''Управление корзинами пользователей'''
     permission_classes = [IsAuthenticated, ]
 
     def get_object(self, *args, **kwargs):
@@ -20,11 +20,13 @@ class BasketListViewSet(APIView):
             return Basket.objects.filter(user_id=self.request.user)
 
     def get(self, request, *args, **kwargs):
+        '''Получить список корзин пользователей с их содержимым'''
         basket = self.get_object()
         serializer = BasketSerializer(basket, many=True)
         return Response(list(serializer.data))
 
     def post(self, *args, **kwargs):
+        '''Добавить в корзину товар'''
         try:
             basket = Basket.objects.get(user_id=self.request.user)
         except Basket.DoesNotExist:
@@ -40,7 +42,7 @@ class BasketListViewSet(APIView):
 
 
 class BasketDetailViewSet(APIView):
-    '''корзине определенного пользователя'''
+    '''Управление определенной корзиной'''
     permission_classes = [IsAuthenticated, ]
 
     def get_object(self, pk):
@@ -52,11 +54,13 @@ class BasketDetailViewSet(APIView):
             raise Http404
 
     def get(self, request, *args, **kwargs):
+        '''получить содержимое корзины'''
         basket = self.get_object(kwargs.get('pk'))
         serializer = ProductListSerializer(ProductList.objects.filter(basket=basket), many=True)
         return Response(list(serializer.data))
 
     def put(self, *args, **kwargs):
+        '''измнить продукт в корзине'''
         if self.request.data.get('id', None):
             basket = self.get_object(kwargs.get('pk'))
             try:
@@ -72,6 +76,7 @@ class BasketDetailViewSet(APIView):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
     def delete(self, *args, **kwargs):
+        '''Удалить продукт из корзины'''
         basket = self.get_object(kwargs.get('pk'))
         if self.request.data.get('id', None):
             try:

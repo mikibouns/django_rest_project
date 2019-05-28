@@ -12,7 +12,7 @@ from .permissions import (
 
 
 class ProductsListViewSet(APIView):
-    '''список продукции'''
+    '''Управление продукцией'''
     permission_classes = [IsAdminOrReadOnly, ]
 
     def get_object(self, request, format=None):
@@ -22,11 +22,13 @@ class ProductsListViewSet(APIView):
             return Products.objects.exclude(quantity=0).order_by('art')
 
     def get(self, request, format=None):
+        '''Получить список продукции'''
         products = self.get_object(request)
         serializer = ProductsSerializer(products, many=True)
         return Response(list(serializer.data))
 
     def post(self, request, format=None):
+        '''Добавить продукцию'''
         serializer = ProductsSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
@@ -37,18 +39,20 @@ class ProductsListViewSet(APIView):
 
 
 class ProductsDetailViewSet(APIView):
-    '''управление списком продукции, для обычных пользователей только чтение'''
+    '''Управление определенным продуктом'''
     permission_classes = [IsAdminOrReadOnly]
 
     def get_object(self, art):
         return get_object_or_404(Products, art=art)
 
     def get(self, request, *args, **kwargs):
+        '''Получить продукт'''
         product = self.get_object(kwargs.get('art'))
         serializer = ProductsSerializer(product)
         return Response(dict(serializer.data))
 
     def put(self, request, *args, **kwargs):
+        '''Изменить продукт'''
         product = Products.objects.get(art=kwargs.get('art'))
         serializer = ProductsSerializer(product, data=request.data, partial=True)
         if serializer.is_valid():
@@ -59,6 +63,7 @@ class ProductsDetailViewSet(APIView):
                          'message': 400}, status=status.HTTP_400_BAD_REQUEST)
 
     def delete(self, request, *args, **kwargs):
+        '''Удалить продукт'''
         user = self.get_object(kwargs.get('art'))
         user.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
