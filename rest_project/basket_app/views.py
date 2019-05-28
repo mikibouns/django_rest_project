@@ -58,26 +58,25 @@ class BasketDetailViewSet(APIView):
         return Response(list(serializer.data))
 
     def put(self, *args, **kwargs):
-        basket = self.get_object(kwargs.get('pk'))
-        print(self.request.data)
         if self.request.data.get('id', None):
+            basket = self.get_object(kwargs.get('pk'))
             try:
-                purchase = ProductList.objects.filter(basket=basket).get(self.request.data.get('id'))
+                instance = ProductList.objects.filter(basket=basket).get(id=self.request.data.get('id'))
             except ProductList.DoesNotExist:
                 return Response({'success': 0,
                                  'expection': 'product id={} does not exist'.format(self.request.data['id']),
                                  'message': 400}, status=status.HTTP_400_BAD_REQUEST)
-            serializer = UpdateBasketSerializer(purchase, data=self.request.data, partial=True)
-            if serializer.is_valid():
-                serializer.save()
-                return Response(dict(serializer.data))
-            return Response(status=status.HTTP_400_BAD_REQUEST)
+            serialiser = UpdateBasketSerializer(instance, self.request.data, partial=True)
+            if serialiser.is_valid():
+                serialiser.save()
+                return Response(dict(serialiser.data))
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
     def delete(self, *args, **kwargs):
         basket = self.get_object(kwargs.get('pk'))
         if self.request.data.get('id', None):
             try:
-                purchase = ProductList.objects.filter(basket=basket).get(id=self.request.data['id'])
+                purchase = ProductList.objects.filter(basket=basket).get(id=self.request.data.get('id'))
                 ProductList.quantity_calculation(product=purchase.product,
                                                  quantity=purchase.quantity * -1)
                 purchase.delete()

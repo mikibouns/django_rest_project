@@ -4,7 +4,6 @@ from rest_framework.serializers import (
     SerializerMethodField,
     ValidationError,
     HyperlinkedModelSerializer,
-    CharField
 )
 
 
@@ -28,6 +27,11 @@ class UpdateBasketSerializer(ModelSerializer):
     class Meta:
         model = ProductList
         fields = ('id', 'quantity')
+
+    def update(self, instance, validated_data):
+        print(validated_data)
+        return instance
+
 
 
 class BasketSerializer(ModelSerializer):
