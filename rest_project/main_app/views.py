@@ -37,6 +37,10 @@ class APIRootView(APIView):
                 'method': 'get',
                 'comments': 'Список корзин пользователей и их содержимое'
             },
-
+            {
+                'api_url': reverse('basket:basket_detail', args=[1], request=request),
+                'method': 'get',
+                'comments': 'Получить корзину c id=1'
+            },
         ]
         return Response(data)

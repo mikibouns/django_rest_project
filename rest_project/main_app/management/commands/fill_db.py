@@ -6,6 +6,9 @@ import random
 from rest_framework.authtoken.models import Token
 
 from product_app.models import Products
+from basket_app.models import Basket, ProductList
+
+User = get_user_model()
 
 
 def walklevel(some_dir, level=1):
@@ -69,11 +72,15 @@ def fill_products():
 class Command(BaseCommand):
     def handle(self, *args, **options):
 
-        get_user_model().objects.bulk_create(iter(users_iterator())) # создание пользователей
+        User.objects.bulk_create(iter(users_iterator())) # создание пользователей
 
         # Создаем суперпользователя при помощи менеджера модели
-        super_user = get_user_model().objects.create_superuser('administ', 'administ@mail.com', 'Testtest123', address='administ@mail.com')
+        super_user = User.objects.create_superuser('administ', 'administ@mail.com', 'Testtest123', address='administ@mail.com')
 
         fill_products() # добавляем список продуктов
-        for user in get_user_model().objects.all():
+
+        # создаем токены для пользователей и корзины с продуктами
+        for user in User.objects.all():
             Token.objects.create(user=user)
+            basket = Basket.objects.create(user_id=user)
+            ProductList.objects.create(basket=basket, product=Products.objects.get(art=111111), quantity=10)
