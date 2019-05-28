@@ -1,38 +1,61 @@
-from .models import Basket
+from .models import Basket, ProductList
 from rest_framework.serializers import (
     ModelSerializer,
     SerializerMethodField,
+    ValidationError,
     HyperlinkedModelSerializer,
     CharField
 )
 
 
+class ProductListSerializer(ModelSerializer):
+    product_name = SerializerMethodField()
+    product_art = SerializerMethodField()
+
+    class Meta:
+        model = ProductList
+        fields = ('id', 'product_name', 'product_art', 'quantity')
+
+    def get_product_name(self, obj):
+        return str(obj.product.name)
+
+    def get_product_art(self, obj):
+        return str(obj.product.art)
+
+
 class BasketSerializer(ModelSerializer):
-    product = SerializerMethodField()
+    products = SerializerMethodField()
     basket_id = SerializerMethodField()
 
     class Meta:
         model = Basket
-        fields = ('basket_id', 'user_id', 'product', 'quantity')
+        fields = ('basket_id', 'user_id', 'products')
+
+    def get_products(self, obj):
+        data = ProductListSerializer(obj.product_children(), many=True).data
+        if data:
+            return data
+        return None
 
     def get_basket_id(self, obj):
         return obj.id
-
-    def get_product(self, obj):
-        return str(obj.product.name)
 
 
 class AddToBasketSerializer(ModelSerializer):
 
     class Meta:
-        model = Basket
-        fields = ('product', 'quantity')
+        model = ProductList
+        fields = ('basket', 'product', 'quantity')
 
     def create(self, validated_data):
+        validated_data['basket'] = self.context.get('basket')
         print(validated_data)
-        purchase = Basket(**validated_data)
-        purchase.save()
-        return purchase
+        try:
+            ProductList.objects.get(product=validated_data.get('product'))
+            raise ValidationError({'product': ['product {} already exists in the basket'.format(validated_data.get('product').art)]})
+        except Basket.DoesNotExist:
+            purchase = Basket.objects.create(**validated_data)
+            return purchase
 
     def get_user(self, obj):
         return str(obj.request.user.id)

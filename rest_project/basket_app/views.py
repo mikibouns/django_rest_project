@@ -5,18 +5,18 @@ from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from rest_framework import status
 
-from .models import Basket
-from .serializers import BasketSerializer, AddToBasketSerializer
+from .models import Basket, ProductList
+from .serializers import BasketSerializer, AddToBasketSerializer, ProductListSerializer
 
 
 class BasketListViewSet(APIView):
-    '''список корзин пользователя'''
+    '''список корзин пользователей'''
     permission_classes = [IsAuthenticated, ]
 
     def get_object(self, *args, **kwargs):
         if self.request.user.is_superuser: # если суперпользователь
             return Basket.objects.all() # возвращаем весь список
-        else: # если авторизованный: вернет корзины авторизованного пользователя
+        else: # если авторизованный пользователь: вернет корзину авторизованного пользователя
             return Basket.objects.filter(user_id=self.request.user)
 
     def get(self, request, *args, **kwargs):
@@ -25,8 +25,12 @@ class BasketListViewSet(APIView):
         return Response(list(serializer.data))
 
     def post(self, *args, **kwargs):
-        print(self.request.data)
-        serializer = AddToBasketSerializer(data=self.request.data, context={'user_id': self.request.user})
+        try:
+            basket = Basket.objects.get(user_id=self.request.user)
+        except Basket.DoesNotExist:
+            basket = Basket.objects.create(user_id=self.request.user)
+
+        serializer = AddToBasketSerializer(data=self.request.data, context={'basket': basket})
         if serializer.is_valid():
             serializer.save()
             return Response(dict(serializer.data), status=status.HTTP_201_CREATED)
@@ -35,14 +39,13 @@ class BasketListViewSet(APIView):
                          'message': 400}, status=status.HTTP_400_BAD_REQUEST)
 
 
-
 class BasketDetailViewSet(APIView):
-    '''информация по корзине'''
+    '''корзине определенного пользователя'''
     permission_classes = [IsAuthenticated, ]
 
-    def get_object(self, *args, **kwargs):
+    def get_object(self, pk):
         request_user = self.request.user
-        basket = get_object_or_404(Basket, pk=kwargs.get('pk'))
+        basket = get_object_or_404(Basket, pk=pk)
         if basket.user_id == request_user or request_user.is_superuser:
             return basket
         else:
@@ -50,12 +53,21 @@ class BasketDetailViewSet(APIView):
 
     def get(self, request, *args, **kwargs):
         basket = self.get_object(kwargs.get('pk'))
-        serializer = BasketSerializer(basket)
-        return Response(dict(serializer.data))
+        serializer = ProductListSerializer(ProductList.objects.filter(basket=basket), many=True)
+        return Response(list(serializer.data))
 
-    def delete(self, request, *args, **kwargs):
+    # def put(self, self, request, *args, **kwargs):
+
+    def delete(self, *args, **kwargs):
         basket = self.get_object(kwargs.get('pk'))
-        basket.delete()
-        return Response(status=status.HTTP_204_NO_CONTENT)
+        if self.request.data:
+            try:
+                purchase = ProductList.objects.filter(basket=basket).get(id=self.request.data['id'])
+                purchase.delete()
+                return Response(status=status.HTTP_204_NO_CONTENT)
+            except ProductList.DoesNotExist:
+                return Response(status=status.HTTP_400_BAD_REQUEST)
+        else:
+            return Response(status=status.HTTP_204_NO_CONTENT)
 
 

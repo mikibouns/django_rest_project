@@ -13,6 +13,8 @@ from .permissions import (
     POSTOrNotForUsers
 )
 
+User = get_user_model()
+
 
 class UserListViewSet(APIView):
     '''список пользователей'''
@@ -20,9 +22,9 @@ class UserListViewSet(APIView):
 
     def get_object(self, request, format=None):
         if request.user.is_superuser: # если суперпользователь
-            return get_user_model().objects.all() # возвращаем весь список
+            return User.objects.all() # возвращаем весь список
         else: # если анонимный пользователь, вернет пустой список, если авторизованный: авторизованного пользователя
-            return get_user_model().objects.filter(id=request.user.id)
+            return User.objects.filter(id=request.user.id)
 
     def get(self, request, format=None):
         users = self.get_object(request)
@@ -33,7 +35,7 @@ class UserListViewSet(APIView):
         serializer = UsersCreateSerializer(data=request.data)
         if serializer.is_valid(raise_exception=True):
             serializer.save()
-            user = get_user_model().objects.get(username=serializer.data['address'])
+            user = User.objects.get(username=serializer.data['address'])
             return Response({'success': 1,
                              'user_id': user.id,
                              'token_auth': Token.objects.create(user=user).key}, status=status.HTTP_201_CREATED)
@@ -49,7 +51,7 @@ class UserDetailViewSet(APIView):
 
     def get_object(self, request, pk):
         request_user = request.user
-        user = get_object_or_404(get_user_model(), pk=pk)
+        user = get_object_or_404(User, pk=pk)
         if user == request_user or request_user.is_superuser:
             return user
         else:

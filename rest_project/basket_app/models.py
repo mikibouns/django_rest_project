@@ -2,11 +2,24 @@ from django.db import models
 from product_app.models import Products
 from django.contrib.auth import get_user_model
 
+User = get_user_model()
+
 
 class Basket(models.Model):
-    user_id = models.ForeignKey(get_user_model(), on_delete=models.CASCADE, verbose_name='user')
-    product = models.ForeignKey(Products, on_delete=models.CASCADE, verbose_name='product_list')
-    quantity = models.PositiveIntegerField(default=1)
+    user_id = models.OneToOneField(User, on_delete=models.CASCADE, verbose_name='user')
 
     def __str__(self):
         return str('Basket: {}, User: {}'.format(self.id, self.user_id))
+
+    def product_children(self):
+        return ProductList.objects.filter(basket=self)
+
+
+class ProductList(models.Model):
+    basket = models.ForeignKey(Basket, on_delete=models.CASCADE)
+    product = models.ForeignKey(Products, on_delete=models.CASCADE)
+    quantity = models.PositiveIntegerField(default=1)
+
+    def __str__(self):
+        return str(self.product.name)
+
