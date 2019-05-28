@@ -25,8 +25,15 @@ class ProductList(models.Model):
 
     @staticmethod
     def quantity_calculation(product, quantity):
-        if quantity > 0 and product.quantity >= quantity or quantity < 0:
-            product.quantity -= quantity
+        if quantity > 0:
+            if product.quantity >= quantity:
+                product.quantity -= quantity
+                product.save()
+                return True
+            else:
+                return False
+        elif quantity < 0:
+            product.quantity += abs(quantity)
             product.save()
             return True
         else:

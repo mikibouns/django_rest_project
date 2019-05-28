@@ -28,7 +28,8 @@ class ProductListSerializer(ModelSerializer):
             instance.quantity = quantity
             if ProductList.quantity_calculation(product=instance.product, quantity=remain):
                 instance.save()
-        return instance
+                return instance
+            raise ValidationError({'quantity': 'not enough products in stock, check product availability'})
 
 
 class BasketSerializer(ModelSerializer):

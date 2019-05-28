@@ -79,7 +79,7 @@ class BasketDetailViewSet(APIView):
                 ProductList.quantity_calculation(product=purchase.product,
                                                  quantity=purchase.quantity * -1)
                 purchase.delete()
-                return Response(status=status.HTTP_200_OK)
+                return Response({'success': 1, 'message': 200}, status=status.HTTP_200_OK)
             except ProductList.DoesNotExist:
                 return Response({'success': 0,
                                  'expection': 'product id={} does not exist'.format(self.request.data['id']),
