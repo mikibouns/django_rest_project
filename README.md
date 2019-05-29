@@ -27,14 +27,14 @@
      ```source env/bin/activate```
 > Деактивируется виртуальная среда командой `deactivate`
 
-### Команды выполняемые в виртуальной среде
+### Зоздание и настройка БД
 
-> Данные команды следует выполнить в порядке очереди для настройки базы данных
+> Данные команды следует выполнить в порядке очереди в [виртуальной среде](#Активация-виртуальной-среды) 
 
 1) `cd rest_project` - переходим в каталог проекта
 
-2) `python manage.py fill_db` - [fill_db](https://github.com/mikibouns/django_rest_project/blob/master/rest_project/main_app/management/commands/fill_db.py) удаляет созданные миграции и БД (доступно для SQLite), затем
-   создает БД и заполняет ее тестовыми данными
+2) `python manage.py fill_db` - [fill_db](https://github.com/mikibouns/django_rest_project/blob/master/rest_project/main_app/management/commands/fill_db.py) удаляет миграции и БД если они существовали, 
+   создает новые миграции и БД, затем заполняет БД тестовыми данными
 
 > Команда для запуска сервера
 
