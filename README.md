@@ -2,7 +2,7 @@
 
 ## Установка и настройка:
 
-Установить python версией не ниже 3.4 ==> https://www.python.org/downloads/ далее, запустить файл установки виртуальной среды [install_env.py](https://github.com/mikibouns/django_api_project2/blob/master/install_env.py), для этого необходимо находиться в каталоге проекта (django_rest_project):
+Установить python версией не ниже 3.4 ==> https://www.python.org/downloads/ далее, запустить файл установки виртуальной среды [install_env.py](https://github.com/mikibouns/django_rest_project/blob/master/install_env.py), для этого необходимо находиться в каталоге проекта (django_rest_project):
   + *Windows*  
      ```python install_env.py```
   + *Linux*  
@@ -33,7 +33,7 @@
 
 1) `cd rest_project` - переходим в каталог проекта
 
-2) `python manage.py update_db` - удаляет созданные миграции и БД (доступно для SQLite), затем
+2) `python manage.py fill_db` - [fill_db](https://github.com/mikibouns/django_rest_project/blob/master/rest_project/main_app/management/commands/fill_db.py) удаляет созданные миграции и БД (доступно для SQLite), затем
    создает БД и заполняет ее тестовыми данными
 
 > Команда для запуска сервера
