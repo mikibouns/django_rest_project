@@ -14,6 +14,11 @@ class APIRootView(APIView):
                 'comments': 'Доступные url (этот документ)'
             },
             {
+                'api_url': reverse('main_app:api_doc', request=request),
+                'method': 'get',
+                'comments': 'Документация к API'
+            },
+            {
                 'api_url': reverse('auth:user_list', request=request),
                 'method': 'get',
                 'comments': 'Список пользователей'

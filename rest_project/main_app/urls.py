@@ -9,5 +9,5 @@ app_name = 'main_app'
 
 urlpatterns = [
     path('', views.APIRootView.as_view(), name='main_app'),
-    path('api_doc', schema_view)
+    path('api_doc', schema_view, name='api_doc')
 ]
