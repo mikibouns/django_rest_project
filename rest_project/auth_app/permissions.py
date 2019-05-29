@@ -2,6 +2,7 @@ from rest_framework.permissions import BasePermission, SAFE_METHODS
 
 
 class POSTOrNotForUsers(BasePermission):
+    '''Метод Post доступен для анонимных пользователей и не доступен для авторизованных, за исключением суперпользователя'''
     message = ''
 
     def has_permission(self, request, view):
