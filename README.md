@@ -2,7 +2,7 @@
 
 ## Установка и настройка:
 
-Установить python версией не ниже 3.4 ==> https://www.python.org/downloads/ далее, запустить файл установки виртуальной среды [install_env.py](https://github.com/mikibouns/django_rest_project/blob/master/install_env.py), для этого необходимо находиться в каталоге проекта (django_rest_project):
+Установить python версией не ниже 3.5 ==> https://www.python.org/downloads/ далее, запустить файл установки виртуальной среды [install_env.py](https://github.com/mikibouns/django_rest_project/blob/master/install_env.py), для этого необходимо находиться в каталоге проекта (django_rest_project):
   + *Windows*  
      ```python install_env.py```
   + *Linux*  

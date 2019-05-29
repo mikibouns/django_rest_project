@@ -7,7 +7,7 @@ import os
 
 
 def main():
-    if float(sys.version[0:3]) >= 3.4:
+    if float(sys.version[0:3]) >= 3.5:
         if platform.system() == 'Windows':
             print('Windows')
             path_activate_env = os.path.join(os.getcwd(), r'venv\Scripts\activate.bat')
