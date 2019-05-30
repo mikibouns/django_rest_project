@@ -22,7 +22,22 @@ class ProductsListViewSet(APIView):
             return Products.objects.exclude(quantity=0).order_by('art')
 
     def get(self, request, format=None):
-        '''Получить список продукции'''
+        '''
+        description: This API deletes/uninstalls a device.
+        parameters:
+          - name: name
+            type: string
+            required: true
+            location: form
+          - name: bloodgroup
+            type: string
+            required: true
+            location: form
+          - name: birthmark
+            type: string
+            required: true
+            location: form
+        '''
         products = self.get_object(request)
         serializer = ProductsSerializer(products, many=True)
         return Response(list(serializer.data))
@@ -46,7 +61,22 @@ class ProductsDetailViewSet(APIView):
         return get_object_or_404(Products, art=art)
 
     def get(self, request, *args, **kwargs):
-        '''Получить продукт'''
+        '''
+        description: This API deletes/uninstalls a device.
+        parameters:
+          - name: name
+            type: string
+            required: true
+            location: form
+          - name: bloodgroup
+            type: string
+            required: true
+            location: form
+          - name: birthmark
+            type: string
+            required: true
+            location: form
+        '''
         product = self.get_object(kwargs.get('art'))
         serializer = ProductsSerializer(product)
         return Response(dict(serializer.data))

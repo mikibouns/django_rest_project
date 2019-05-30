@@ -4,6 +4,7 @@ from django.conf import settings
 from django.conf.urls.static import static
 from rest_framework.authtoken import views as auth_token
 
+
 urlpatterns = [
     path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
     path('admin/', admin.site.urls),
