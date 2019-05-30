@@ -2,18 +2,18 @@
 
 ## Установка и настройка:
 
-Установить python версией не ниже 3.5 ==> https://www.python.org/downloads/ далее, запустить файл предварительной настройки [install_env.py](https://github.com/mikibouns/django_rest_project/blob/master/install_env.py), для этого необходимо находиться в каталоге проекта (django_rest_project):
+Установить python версией не ниже 3.5 ==> https://www.python.org/downloads/ далее, запустить файл предварительной настройки [presetting.py](https://github.com/mikibouns/django_rest_project/blob/master/presetting.py), для этого необходимо находиться в каталоге проекта (django_rest_project):
   + *Windows*  
-     ```python install_env.py```
+     ```python presetting.py```
   + *Linux*  
-     ```python3 install_env.py```   
+     ```python3 presetting.py```   
      или  
-     ```chmod +x install_env.py && ./install_env.py```  
+     ```chmod +x presetting.py && ./presetting.py```  
   + *MacOS*  
-     ```python3 install_env.py```  
+     ```python3 presetting.py```  
 
 ### Активация виртуальной среды
-Активировать виртуальную можно следующим способом, для этого необходимо находиться в корневом каталоге (django_rest_project):  
+Активировать виртуальную можно следующим способом, для этого необходимо находиться в каталоге проекта (django_rest_project):  
   + *Windows*  
       ```venv\Scripts\activate.bat```
       > возможно прийдется указать абсолютный путь в файлу `activate.bat`
