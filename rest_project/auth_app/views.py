@@ -1,6 +1,6 @@
 from django.http import Http404
 from django.shortcuts import get_object_or_404
-from .serializers import UsersSerializer
+from .serializers import UsersSerializer, UsersCreateUpdateSerializer
 from rest_framework.response import Response
 from rest_framework.generics import GenericAPIView, UpdateAPIView
 from rest_framework import status
@@ -16,7 +16,7 @@ from .permissions import (
 User = get_user_model()
 
 
-class UserListViewSet(UpdateAPIView, GenericAPIView):
+class UserListViewSet(GenericAPIView):
     '''Упревление пользователями'''
     permission_classes = [POSTOrNotForUsers, ]
     serializer_class = UsersSerializer
@@ -34,9 +34,9 @@ class UserListViewSet(UpdateAPIView, GenericAPIView):
         serializer = self.serializer_class(users, many=True)
         return Response(list(serializer.data))
 
-    def post(self, request):
+    def post(self, request, *args, **kwargs):
         '''Создать пользователя'''
-        serializer = self.serializer_class(data=request.data)
+        serializer = UsersCreateUpdateSerializer(data=self.request.data)
         if serializer.is_valid(raise_exception=True):
             serializer.save()
             user = User.objects.get(username=serializer.data['address'])
@@ -52,7 +52,7 @@ class UserListViewSet(UpdateAPIView, GenericAPIView):
 class UserDetailViewSet(GenericAPIView):
     '''Управление пользователем'''
     permission_classes = [IsAuthenticated, ]
-    serializer_class = UsersSerializer
+    serializer_class = UsersCreateUpdateSerializer
 
     def get_queryset(self):
         request_user = self.request.user
@@ -68,10 +68,11 @@ class UserDetailViewSet(GenericAPIView):
         serializer = self.serializer_class(user)
         return Response(dict(serializer.data))
 
-    def put(self, request, pk):
+    def put(self, request, *args, **kwargs):
         '''Изменить пользователя'''
-        user = self.get_queryset()
-        serializer = self.serializer_class(user, data=self.request.data, partial=True)
+        instance = self.get_queryset()
+        print(instance.fio)
+        serializer = self.serializer_class(instance, data=request.data, partial=True)
         if serializer.is_valid():
             serializer.save()
             return Response(dict(serializer.data))
