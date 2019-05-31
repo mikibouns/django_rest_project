@@ -1,5 +1,5 @@
 from rest_framework.response import Response
-from rest_framework.views import APIView
+from rest_framework.generics import GenericAPIView
 from rest_framework import status
 from django.shortcuts import get_object_or_404
 # from rest_framework.permissions import IsAuthenticated
@@ -11,25 +11,29 @@ from .permissions import (
 )
 
 
-class ProductsListViewSet(APIView):
+class ProductsListViewSet(GenericAPIView):
     '''Управление продукцией'''
     permission_classes = [IsAdminOrReadOnly, ]
+    serializer_class = ProductsSerializer
 
-    def get_object(self, request, format=None):
-        if request.user.is_superuser: # если суперпользователь
-            return Products.objects.all() # возвращаем весь список
+    def get_queryset(self):
+        queryset = Products.objects.all()
+        if self.request.user.is_superuser: # если суперпользователь
+            return queryset # возвращаем весь список
         else: # если пользователь не администратор показать товар который есть в наличии
-            return Products.objects.exclude(quantity=0).order_by('art')
+            return queryset.exclude(quantity=0).order_by('art')
 
-    def get(self, request, format=None):
-        '''Получить список продукции'''
-        products = self.get_object(request)
-        serializer = ProductsSerializer(products, many=True)
+    def get(self, request, *args, **kwargs):
+        '''
+        Получить список продукции
+        '''
+        products = self.get_queryset()
+        serializer = self.serializer_class(products, many=True)
         return Response(list(serializer.data))
 
-    def post(self, request, format=None):
+    def post(self, request, *args, **kwargs):
         '''Добавить продукцию'''
-        serializer = ProductsSerializer(data=request.data)
+        serializer = self.serializer_class(data=request.data)
         if serializer.is_valid():
             serializer.save()
             return Response(dict(serializer.data), status=status.HTTP_201_CREATED)
@@ -38,23 +42,24 @@ class ProductsListViewSet(APIView):
                          'message': 400}, status=status.HTTP_400_BAD_REQUEST)
 
 
-class ProductsDetailViewSet(APIView):
+class ProductsDetailViewSet(GenericAPIView):
     '''Управление определенным продуктом'''
     permission_classes = [IsAdminOrReadOnly]
+    serializer_class = ProductsSerializer
 
-    def get_object(self, art):
-        return get_object_or_404(Products, art=art)
+    def get_queryset(self):
+        return get_object_or_404(Products, art=self.kwargs.get('art'))
 
     def get(self, request, *args, **kwargs):
         '''Получить продукт'''
-        product = self.get_object(kwargs.get('art'))
-        serializer = ProductsSerializer(product)
+        product = self.get_queryset()
+        serializer = self.serializer_class(product)
         return Response(dict(serializer.data))
 
     def put(self, request, *args, **kwargs):
         '''Изменить продукт'''
         product = Products.objects.get(art=kwargs.get('art'))
-        serializer = ProductsSerializer(product, data=request.data, partial=True)
+        serializer = self.serializer_class(product, data=request.data, partial=True)
         if serializer.is_valid():
             serializer.save()
             return Response(dict(serializer.data), status=status.HTTP_201_CREATED)
@@ -64,7 +69,7 @@ class ProductsDetailViewSet(APIView):
 
     def delete(self, request, *args, **kwargs):
         '''Удалить продукт'''
-        user = self.get_object(kwargs.get('art'))
+        user = self.get_queryset()
         user.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 

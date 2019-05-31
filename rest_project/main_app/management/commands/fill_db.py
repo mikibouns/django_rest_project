@@ -90,8 +90,8 @@ class Command(BaseCommand):
         # создаем токены для пользователей и корзины с продуктами
         for user in User.objects.all():
             Token.objects.create(user=user)
+            basket = Basket.objects.create(user_id=user)
             if random.randint(0, 1):
-                basket = Basket.objects.create(user_id=user)
                 for prod in Products.objects.all():
                     if random.randint(0, 1):
                         ProductList.objects.create(basket=basket,

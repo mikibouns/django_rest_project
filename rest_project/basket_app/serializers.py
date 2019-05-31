@@ -3,23 +3,32 @@ from rest_framework.serializers import (
     ModelSerializer,
     SerializerMethodField,
     ValidationError,
-    HyperlinkedModelSerializer,
+    CharField,
 )
 
 
 class ProductListSerializer(ModelSerializer):
-    product_name = SerializerMethodField()
-    product_art = SerializerMethodField()
+    product = CharField(read_only=True)
+    art = SerializerMethodField(read_only=True)
 
     class Meta:
         model = ProductList
-        fields = ('id', 'product_name', 'product_art', 'quantity')
+        fields = ('id', 'product', 'art', 'quantity')
 
-    def get_product_name(self, obj):
-        return str(obj.product.name)
+    def get_art(self, obj):
+        return obj.product.art
 
-    def get_product_art(self, obj):
-        return str(obj.product.art)
+    def create(self, validated_data):
+        validated_data['basket'] = self.context.get('basket')
+        print(validated_data)
+        try:
+            ProductList.objects.filter(basket=validated_data.get('basket')).get(product=validated_data.get('product'))
+            raise ValidationError({'product': ['product {} already exists in the basket'.format(validated_data.get('product').art)]})
+        except ProductList.DoesNotExist:
+            if ProductList.quantity_calculation(product=validated_data.get('product'), quantity=abs(validated_data.get('quantity', 1))):
+                purchase = ProductList.objects.create(**validated_data)
+                return purchase
+            raise ValidationError({'quantity': 'not enough products in stock, check product availability'})
 
     def update(self, instance, validated_data):
         quantity = validated_data.get('quantity', None)
@@ -34,7 +43,7 @@ class ProductListSerializer(ModelSerializer):
 
 class BasketSerializer(ModelSerializer):
     products = SerializerMethodField()
-    basket_id = SerializerMethodField()
+    basket_id = SerializerMethodField(read_only=True)
 
     class Meta:
         model = Basket
@@ -51,14 +60,17 @@ class BasketSerializer(ModelSerializer):
 
 
 class AddToBasketSerializer(ModelSerializer):
+    product_name = SerializerMethodField(read_only=True)
 
     class Meta:
         model = ProductList
-        fields = ('product', 'quantity')
+        fields = ('id', 'product', 'product_name', 'quantity')
+
+    def get_product_name(self, obj):
+        return obj.product.name
 
     def create(self, validated_data):
         validated_data['basket'] = self.context.get('basket')
-        print(validated_data)
         try:
             ProductList.objects.filter(basket=validated_data.get('basket')).get(product=validated_data.get('product'))
             raise ValidationError({'product': ['product {} already exists in the basket'.format(validated_data.get('product').art)]})

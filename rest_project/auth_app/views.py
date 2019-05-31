@@ -1,8 +1,8 @@
 from django.http import Http404
 from django.shortcuts import get_object_or_404
-from .serializers import UsersSerializer, UsersCreateSerializer
+from .serializers import UsersSerializer
 from rest_framework.response import Response
-from rest_framework.views import APIView
+from rest_framework.generics import GenericAPIView, UpdateAPIView
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.authtoken.models import Token
@@ -16,25 +16,27 @@ from .permissions import (
 User = get_user_model()
 
 
-class UserListViewSet(APIView):
+class UserListViewSet(UpdateAPIView, GenericAPIView):
     '''Упревление пользователями'''
     permission_classes = [POSTOrNotForUsers, ]
+    serializer_class = UsersSerializer
 
-    def get_object(self, request, format=None):
-        if request.user.is_superuser: # если суперпользователь
-            return User.objects.all() # возвращаем весь список
+    def get_queryset(self):
+        queryset = User.objects.all()
+        if self.request.user.is_superuser: # если суперпользователь
+            return queryset # возвращаем весь список
         else: # если анонимный пользователь, вернет пустой список, если авторизованный: авторизованного пользователя
-            return User.objects.filter(id=request.user.id)
+            return queryset.filter(id=self.request.user.id)
 
-    def get(self, request, format=None):
+    def get(self, request, *args, **kwargs):
         '''Получить список пользователей'''
-        users = self.get_object(request)
-        serializer = UsersSerializer(users, many=True)
+        users = self.get_queryset()
+        serializer = self.serializer_class(users, many=True)
         return Response(list(serializer.data))
 
     def post(self, request):
         '''Создать пользователя'''
-        serializer = UsersCreateSerializer(data=request.data)
+        serializer = self.serializer_class(data=request.data)
         if serializer.is_valid(raise_exception=True):
             serializer.save()
             user = User.objects.get(username=serializer.data['address'])
@@ -47,35 +49,36 @@ class UserListViewSet(APIView):
                              'message': 400}, status=status.HTTP_400_BAD_REQUEST)
 
 
-class UserDetailViewSet(APIView):
+class UserDetailViewSet(GenericAPIView):
     '''Управление пользователем'''
     permission_classes = [IsAuthenticated, ]
+    serializer_class = UsersSerializer
 
-    def get_object(self, request, pk):
-        request_user = request.user
-        user = get_object_or_404(User, pk=pk)
+    def get_queryset(self):
+        request_user = self.request.user
+        user = get_object_or_404(User, pk=self.kwargs.get('pk'))
         if user == request_user or request_user.is_superuser:
             return user
         else:
             raise Http404
 
-    def get(self, request, pk, format=None):
+    def get(self, request, *args, **kwargs):
         '''Получить детализацию по пользователю'''
-        user = self.get_object(request, pk)
-        serializer = UsersSerializer(user)
+        user = self.get_queryset()
+        serializer = self.serializer_class(user)
         return Response(dict(serializer.data))
 
-    def put(self, request, pk, format=None):
+    def put(self, request, pk):
         '''Изменить пользователя'''
-        user = self.get_object(request, pk)
-        serializer = UsersSerializer(user, data=request.data, partial=True)
+        user = self.get_queryset()
+        serializer = self.serializer_class(user, data=self.request.data, partial=True)
         if serializer.is_valid():
             serializer.save()
             return Response(dict(serializer.data))
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    def delete(self, request, pk, format=None):
+    def delete(self, request, *args, **kwargs):
         '''Удалить пользователя'''
-        user = self.get_object(request, pk)
+        user = self.get_queryset()
         user.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
