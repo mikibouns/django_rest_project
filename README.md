@@ -93,6 +93,6 @@ password: Testtest123
 ```
 Аутентификация токеном, пример:
 ```
-curl -X GET http://127.0.0.1:8000/api/example/ -H 'Authorization: Token 35edb217ece459a3175ffe4995627bef4c085b0e'
+curl -X GET http://127.0.0.1:8000/api/v1/users/ -H "Authorization: Token 1d7bdc13b9f7fe39355d9811f20abec461ce884d"
 ```
 
