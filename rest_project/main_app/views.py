@@ -46,7 +46,12 @@ class APIRootView(APIView):
             {
                 'api_url': reverse('basket:basket_detail', args=[1], request=request),
                 'method': 'get',
-                'comments': 'Получить корзину c id=1'
+                'comments': 'Получить содержимое корзины c id=1'
+            },
+            {
+                'api_url': reverse('basket:purchase_detail', args=[1, 1], request=request),
+                'method': 'get',
+                'comments': 'Получить продукт c id=1 из корзины c id=1'
             },
         ]
         return Response(data)
