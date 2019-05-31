@@ -51,3 +51,4 @@ python manage.py runserver 0.0.0.0:8080 - где 8080 это номер порт
 login: administ
 password: Testtest123
 ```
+

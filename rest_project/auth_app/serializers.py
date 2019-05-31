@@ -1,10 +1,8 @@
 from django.contrib.auth import get_user_model
-from basket_app.models import Basket
 from rest_framework.serializers import (
     ModelSerializer,
-    SerializerMethodField,
     ValidationError,
-    CharField
+    CharField,
 )
 
 User = get_user_model()
@@ -16,10 +14,6 @@ class UsersSerializer(ModelSerializer):
     class Meta:
         model = get_user_model()
         fields = ('id', 'address', 'fio', 'password')
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        print(self.context.get('request'))
 
     def create(self, validated_data):
         '''создание пользователя'''
