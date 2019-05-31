@@ -1,8 +1,8 @@
 from django.http import Http404
 from django.shortcuts import get_object_or_404
-from .serializers import UsersSerializer, UsersCreateUpdateSerializer
+from .serializers import UsersSerializer
 from rest_framework.response import Response
-from rest_framework.generics import GenericAPIView, UpdateAPIView
+from rest_framework.generics import GenericAPIView
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.authtoken.models import Token
@@ -36,7 +36,7 @@ class UserListViewSet(GenericAPIView):
 
     def post(self, request, *args, **kwargs):
         '''Создать пользователя'''
-        serializer = UsersCreateUpdateSerializer(data=self.request.data)
+        serializer = self.serializer_class(data=self.request.data)
         if serializer.is_valid(raise_exception=True):
             serializer.save()
             user = User.objects.get(username=serializer.data['address'])
@@ -52,7 +52,7 @@ class UserListViewSet(GenericAPIView):
 class UserDetailViewSet(GenericAPIView):
     '''Управление пользователем'''
     permission_classes = [IsAuthenticated, ]
-    serializer_class = UsersCreateUpdateSerializer
+    serializer_class = UsersSerializer
 
     def get_queryset(self):
         request_user = self.request.user
@@ -71,7 +71,6 @@ class UserDetailViewSet(GenericAPIView):
     def put(self, request, *args, **kwargs):
         '''Изменить пользователя'''
         instance = self.get_queryset()
-        print(instance.fio)
         serializer = self.serializer_class(instance, data=request.data, partial=True)
         if serializer.is_valid():
             serializer.save()

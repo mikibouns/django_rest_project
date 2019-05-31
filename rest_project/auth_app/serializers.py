@@ -11,23 +11,18 @@ User = get_user_model()
 
 
 class UsersSerializer(ModelSerializer):
-    password = CharField(write_only=True)
+    password = CharField(write_only=True, allow_blank=True)
 
     class Meta:
         model = get_user_model()
         fields = ('id', 'address', 'fio', 'password')
 
-
-class UsersCreateUpdateSerializer(ModelSerializer):
-    password = CharField(write_only=True)
-
-    class Meta:
-        model = get_user_model()
-        fields = ('id', 'address', 'fio', 'password')
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        print(self.context.get('request'))
 
     def create(self, validated_data):
         '''создание пользователя'''
-        print(validated_data)
         modifed_validated_data = {
             'address': validated_data.get('address', None),
             'username': validated_data.get('address', None),
