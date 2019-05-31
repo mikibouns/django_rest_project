@@ -1,6 +1,6 @@
 from django.http import Http404
 from django.shortcuts import get_object_or_404
-from .serializers import UsersSerializer
+from .serializers import UsersSerializer, UsersUpdateSerializer
 from rest_framework.response import Response
 from rest_framework.generics import GenericAPIView
 from rest_framework import status
@@ -52,7 +52,7 @@ class UserListViewSet(GenericAPIView):
 class UserDetailViewSet(GenericAPIView):
     '''Управление пользователем'''
     permission_classes = [IsAuthenticated, ]
-    serializer_class = UsersSerializer
+    serializer_class = UsersUpdateSerializer
 
     def get_queryset(self):
         request_user = self.request.user
@@ -71,8 +71,8 @@ class UserDetailViewSet(GenericAPIView):
     def put(self, request, *args, **kwargs):
         '''Изменить пользователя'''
         instance = self.get_queryset()
-        serializer = self.serializer_class(instance, data=request.data, partial=True)
-        if serializer.is_valid():
+        serializer = self.serializer_class(instance, data=self.request.data, partial=True)
+        if serializer.is_valid(raise_exception=True):
             serializer.save()
             return Response(dict(serializer.data))
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

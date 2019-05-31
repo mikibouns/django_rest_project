@@ -2,6 +2,7 @@ from django.contrib.auth import get_user_model
 from rest_framework.serializers import (
     ModelSerializer,
     ValidationError,
+    CharField,
     ReadOnlyField
 )
 
@@ -9,6 +10,7 @@ User = get_user_model()
 
 
 class UsersSerializer(ModelSerializer):
+    password = CharField(write_only=True)
     id = ReadOnlyField()
 
     class Meta:
@@ -29,6 +31,26 @@ class UsersSerializer(ModelSerializer):
             print(str(e))
             raise ValidationError({'address': [str(e).split(':')[0], ]})
         return user
+
+    def update(self, instance, validated_data):
+        '''обновление пользователя'''
+        user_addr = validated_data.get('address', instance.address)
+        instance.fio = validated_data.get('fio', instance.fio)
+        instance.address = user_addr
+        instance.username = user_addr
+        if validated_data.get('password', False):
+            instance.set_password(validated_data['password'])
+        instance.save()
+        return instance
+
+
+class UsersUpdateSerializer(ModelSerializer):
+    password = CharField(write_only=True, allow_blank=True)
+    id = ReadOnlyField()
+
+    class Meta:
+        model = get_user_model()
+        fields = ('id', 'address', 'fio', 'password')
 
     def update(self, instance, validated_data):
         '''обновление пользователя'''
