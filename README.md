@@ -96,3 +96,10 @@ password: Testtest123
 curl -X GET http://127.0.0.1:8000/api/v1/users/ -H "Authorization: Token 1d7bdc13b9f7fe39355d9811f20abec461ce884d"
 ```
 
+## Документация
+
+Для документирования API использовал:
++ [Django-rest-swagger](http://127.0.0.1:8000/api/v1/swagger_api_docs)  
++ [Самоописывающий API DRF](http://127.0.0.1:8000/api/v1/)
++ [Встроенную документацию для API DRF](http://127.0.0.1:8000/api/v1/drf_api_docs/)
+

@@ -14,9 +14,14 @@ class APIRootView(APIView):
                 'comments': 'Доступные url (этот документ)'
             },
             {
-                'api_url': reverse('main_app:api_doc', request=request),
+                'api_url': reverse('main_app:swagger_api_docs', request=request),
                 'method': 'get',
-                'comments': 'Документация к API'
+                'comments': 'Swagger документация к API'
+            },
+            {
+                'api_url': 'http://127.0.0.1:8000/api/v1/drf_api_docs/',
+                'method': 'get',
+                'comments': 'DRF документация к API'
             },
             {
                 'api_url': reverse('auth:user_list', request=request),
