@@ -52,3 +52,47 @@ login: administ
 password: Testtest123
 ```
 
+## Авторизация и аутентификация
+
+Регистрация нового пользователя:
+
++ URL: http://127.0.0.1:8000/api/v1/users/
++ method: POST
+>Request
+```buildoutcfg
+{
+  "address": "<string>",
+  "fio": "<string>",
+  "password": "<string>"
+}
+```
+>Response
+```
+{
+    "success": 1,
+    "user_id": 8,
+    "token": "35edb217ece459a3175ffe4995627bef4c085b0e"
+}
+```
+
+Как получить токен зарегестрированному пользователю:
++ URL: http://127.0.0.1:8000/api/v1/get_token/
++ method: POST
+>Request
+```buildoutcfg
+{
+  "username": "<string>",
+  "password": "<string>"
+}
+```
+>Response
+```buildoutcfg
+{
+  "token": "1d7bdc13b9f7fe39355d9811f20abec461ce884d"
+}
+```
+Аутентифицированных токеном. Например:
+```
+curl -X GET http://127.0.0.1:8000/api/example/ -H 'Authorization: Token 35edb217ece459a3175ffe4995627bef4c085b0e'
+```
+

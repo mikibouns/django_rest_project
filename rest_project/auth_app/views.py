@@ -42,7 +42,7 @@ class UserListViewSet(GenericAPIView):
             user = User.objects.get(username=serializer.data['address'])
             return Response({'success': 1,
                              'user_id': user.id,
-                             'token_auth': Token.objects.create(user=user).key}, status=status.HTTP_201_CREATED)
+                             'token': Token.objects.create(user=user).key}, status=status.HTTP_201_CREATED)
         else:
             return Response({'success': 0,
                              'expection': serializer._errors,
