@@ -4,6 +4,7 @@ from rest_framework.serializers import (
     SerializerMethodField,
     ValidationError,
     CharField,
+    ReadOnlyField
 )
 
 
@@ -61,6 +62,7 @@ class BasketSerializer(ModelSerializer):
 
 class AddToBasketSerializer(ModelSerializer):
     product_name = SerializerMethodField(read_only=True)
+    id = ReadOnlyField()
 
     class Meta:
         model = ProductList

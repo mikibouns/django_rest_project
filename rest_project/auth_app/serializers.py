@@ -2,14 +2,14 @@ from django.contrib.auth import get_user_model
 from rest_framework.serializers import (
     ModelSerializer,
     ValidationError,
-    CharField,
+    ReadOnlyField
 )
 
 User = get_user_model()
 
 
 class UsersSerializer(ModelSerializer):
-    password = CharField(write_only=True, allow_blank=True)
+    id = ReadOnlyField()
 
     class Meta:
         model = get_user_model()
