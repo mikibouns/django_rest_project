@@ -8,6 +8,9 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.authtoken.models import Token
 from django.contrib.auth import get_user_model
 
+from django_filters.rest_framework import DjangoFilterBackend
+
+
 from .permissions import (
     POSTOrNotForUsers
 )
@@ -19,6 +22,8 @@ class UserListViewSet(GenericAPIView):
     '''Упревление пользователями'''
     permission_classes = [POSTOrNotForUsers, ]
     serializer_class = UsersSerializer
+    filter_backends = (DjangoFilterBackend,)
+    filterset_fields = ('id', 'address', 'fio')
 
     def get_queryset(self):
         queryset = User.objects.all()
@@ -28,7 +33,9 @@ class UserListViewSet(GenericAPIView):
             return queryset.filter(id=self.request.user.id)
 
     def get(self, request, *args, **kwargs):
-        '''Получить список пользователей'''
+        '''
+        Получить список пользователей
+        '''
         users = self.get_queryset()
         serializer = self.serializer_class(users, many=True)
         return Response(list(serializer.data))

@@ -2,12 +2,12 @@ from .models import Products
 from rest_framework.serializers import (
     ModelSerializer,
     SerializerMethodField,
-    HyperlinkedModelSerializer,
     CharField,
 )
 
 
 class ProductsSerializer(ModelSerializer):
+    art = CharField(read_only=True)
 
     class Meta:
         model = Products

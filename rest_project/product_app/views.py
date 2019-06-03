@@ -1,8 +1,10 @@
 from rest_framework.response import Response
 from rest_framework.generics import GenericAPIView
+from rest_framework.mixins import ListModelMixin, CreateModelMixin, DestroyModelMixin
 from rest_framework import status
 from django.shortcuts import get_object_or_404
 # from rest_framework.permissions import IsAuthenticated
+from django_filters.rest_framework import DjangoFilterBackend
 
 from .serializers import ProductsSerializer
 from .models import Products
@@ -15,6 +17,8 @@ class ProductsListViewSet(GenericAPIView):
     '''Управление продукцией'''
     permission_classes = [IsAdminOrReadOnly, ]
     serializer_class = ProductsSerializer
+    filter_backends = (DjangoFilterBackend,)
+    filterset_fields = ('art',)
 
     def get_queryset(self):
         queryset = Products.objects.all()
@@ -72,6 +76,7 @@ class ProductsDetailViewSet(GenericAPIView):
         user = self.get_queryset()
         user.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
+
 
 
 
