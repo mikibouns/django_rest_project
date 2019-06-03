@@ -16,7 +16,7 @@ class Basket(models.Model):
 
 
 class ProductList(models.Model):
-    basket = models.ForeignKey(Basket, on_delete=models.CASCADE)
+    basket = models.ForeignKey(Basket, on_delete=models.CASCADE, related_name='prod')
     product = models.ForeignKey(Products, on_delete=models.CASCADE)
     quantity = models.PositiveIntegerField(default=1)
 
