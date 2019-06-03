@@ -11,7 +11,9 @@ from .serializers import BasketSerializer, AddToBasketSerializer, ProductListSer
 
 
 class BasketListViewSet(GenericAPIView):
-    '''Управление корзинами пользователей'''
+    '''
+    Управление корзинами пользователей
+    '''
     permission_classes = [IsAuthenticated, ]
     serializer_class = BasketSerializer
 
@@ -23,14 +25,18 @@ class BasketListViewSet(GenericAPIView):
             return queryset.filter(user_id=self.request.user)
 
     def get(self, request, *args, **kwargs):
-        '''Получить список корзин пользователей с их содержимым'''
+        '''
+        Получить список корзин пользователей с их содержимым
+        '''
         basket = self.get_queryset()
         serializer = self.serializer_class(basket, many=True)
         return Response(list(serializer.data))
 
 
 class BasketDetailViewSet(GenericAPIView):
-    '''Управление определенной корзиной'''
+    '''
+    Управление определенной корзиной
+    '''
     permission_classes = [IsAuthenticated, ]
     serializer_class = AddToBasketSerializer
 
@@ -43,13 +49,17 @@ class BasketDetailViewSet(GenericAPIView):
             raise Http404
 
     def get(self, request, *args, **kwargs):
-        '''получить содержимое корзины'''
+        '''
+        получить содержимое корзины
+        '''
         basket = self.get_queryset()
         serializer = self.serializer_class(ProductList.objects.filter(basket=basket), many=True)
         return Response(list(serializer.data))
 
     def post(self, *args, **kwargs):
-        '''Добавить в корзину товар'''
+        '''
+        Добавить в корзину товар
+        '''
         try:
             basket = Basket.objects.get(user_id=self.request.user)
         except Basket.DoesNotExist:
@@ -65,6 +75,9 @@ class BasketDetailViewSet(GenericAPIView):
 
 
 class BasketDeleteViewSet(GenericAPIView):
+    '''
+    Управление продуктом
+    '''
     permission_classes = [IsAuthenticated, ]
     serializer_class = ProductListSerializer
 
@@ -75,13 +88,17 @@ class BasketDeleteViewSet(GenericAPIView):
             raise Http404
 
     def get(self, request, *args, **kwargs):
-        '''Получить продукт в корзине'''
+        '''
+        Получить продукт в корзине
+        '''
         purchase = self.get_queryset()
         serializer = self.serializer_class(purchase)
         return Response(dict(serializer.data))
 
     def put(self, request, *args, **kwargs):
-        '''измнить продукт в корзине'''
+        '''
+        измнить продукт в корзине
+        '''
         purchase = self.get_queryset()
         instance = purchase
         serialiser = self.serializer_class(instance, self.request.data, partial=True)
@@ -91,7 +108,9 @@ class BasketDeleteViewSet(GenericAPIView):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
     def delete(self, request, *args, **kwargs):
-        '''Удалить продукт из корзины'''
+        '''
+        Удалить продукт из корзины
+        '''
         purchase = self.get_queryset()
         ProductList.quantity_calculation(product=purchase.product,
                                          quantity=purchase.quantity * -1)
