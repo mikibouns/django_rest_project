@@ -2,7 +2,7 @@ from django.http import Http404
 from django.shortcuts import get_object_or_404
 from .serializers import UsersSerializer, UsersUpdateSerializer
 from rest_framework.response import Response
-from rest_framework.generics import GenericAPIView
+from rest_framework.generics import GenericAPIView, ListCreateAPIView
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.authtoken.models import Token
@@ -18,7 +18,7 @@ from .permissions import (
 User = get_user_model()
 
 
-class UserListViewSet(GenericAPIView):
+class UserListViewSet(ListCreateAPIView):
     '''
     Упревление пользователями
     '''
@@ -34,29 +34,29 @@ class UserListViewSet(GenericAPIView):
         else: # если анонимный пользователь, вернет пустой список, если авторизованный: авторизованного пользователя
             return queryset.filter(id=self.request.user.id)
 
-    def get(self, request, *args, **kwargs):
-        '''
-        Получить список пользователей
-        '''
-        users = self.get_queryset()
-        serializer = self.serializer_class(users, many=True)
-        return Response(list(serializer.data))
-
-    def post(self, request, *args, **kwargs):
-        '''
-        Создать пользователя
-        '''
-        serializer = self.serializer_class(data=self.request.data)
-        if serializer.is_valid(raise_exception=True):
-            serializer.save()
-            user = User.objects.get(username=serializer.data['address'])
-            return Response({'success': 1,
-                             'user_id': user.id,
-                             'token': Token.objects.create(user=user).key}, status=status.HTTP_201_CREATED)
-        else:
-            return Response({'success': 0,
-                             'expection': serializer._errors,
-                             'message': 400}, status=status.HTTP_400_BAD_REQUEST)
+    # def get(self, request, *args, **kwargs):
+    #     '''
+    #     Получить список пользователей
+    #     '''
+    #     users = self.get_queryset()
+    #     serializer = self.serializer_class(users, many=True)
+    #     return Response(list(serializer.data))
+    #
+    # def post(self, request, *args, **kwargs):
+    #     '''
+    #     Создать пользователя
+    #     '''
+    #     serializer = self.serializer_class(data=self.request.data)
+    #     if serializer.is_valid(raise_exception=True):
+    #         serializer.save()
+    #         user = User.objects.get(username=serializer.data['address'])
+    #         return Response({'success': 1,
+    #                          'user_id': user.id,
+    #                          'token': Token.objects.create(user=user).key}, status=status.HTTP_201_CREATED)
+    #     else:
+    #         return Response({'success': 0,
+    #                          'expection': serializer._errors,
+    #                          'message': 400}, status=status.HTTP_400_BAD_REQUEST)
 
 
 class UserDetailViewSet(GenericAPIView):
