@@ -6,7 +6,7 @@ from django.shortcuts import get_object_or_404
 # from rest_framework.permissions import IsAuthenticated
 from django_filters.rest_framework import DjangoFilterBackend
 
-from .serializers import ProductsSerializer
+from .serializers import ProductsSerializer, ProductsUpdateSerializer
 from .models import Products
 from .permissions import (
     IsAdminOrReadOnly
@@ -49,7 +49,7 @@ class ProductsListViewSet(GenericAPIView):
 class ProductsDetailViewSet(GenericAPIView):
     '''Управление определенным продуктом'''
     permission_classes = [IsAdminOrReadOnly]
-    serializer_class = ProductsSerializer
+    serializer_class = ProductsUpdateSerializer
 
     def get_queryset(self):
         return get_object_or_404(Products, art=self.kwargs.get('art'))
