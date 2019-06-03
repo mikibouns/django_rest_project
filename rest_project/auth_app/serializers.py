@@ -1,4 +1,5 @@
 from django.contrib.auth import get_user_model
+from basket_app.models import Basket
 from rest_framework.serializers import (
     ModelSerializer,
     ValidationError,
@@ -26,7 +27,8 @@ class UsersSerializer(ModelSerializer):
             'password': validated_data.get('password', None)
         }
         try:
-            user = get_user_model().objects.create_user(**modifed_validated_data)
+            user = User.objects.create_user(**modifed_validated_data)
+            Basket.objects.create(user_id=user)
         except Exception as e:
             print(str(e))
             raise ValidationError({'address': [str(e).split(':')[0], ]})
