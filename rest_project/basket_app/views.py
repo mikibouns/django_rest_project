@@ -1,21 +1,25 @@
 from django.http import Http404
 from django.shortcuts import get_object_or_404
 from rest_framework.views import APIView
-from rest_framework.generics import GenericAPIView, DestroyAPIView
+from rest_framework.generics import GenericAPIView, ListAPIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from rest_framework import status
+
+from django_filters.rest_framework import DjangoFilterBackend
 
 from .models import Basket, ProductList
 from .serializers import BasketSerializer, AddToBasketSerializer, ProductListSerializer
 
 
-class BasketListViewSet(GenericAPIView):
+class BasketListViewSet(ListAPIView):
     '''
     Управление корзинами пользователей
     '''
     permission_classes = [IsAuthenticated, ]
     serializer_class = BasketSerializer
+    filter_backends = (DjangoFilterBackend,)
+    filterset_fields = ('id', 'user_id')
 
     def get_queryset(self, *args, **kwargs):
         queryset = Basket.objects.all()
@@ -24,13 +28,13 @@ class BasketListViewSet(GenericAPIView):
         else: # если авторизованный пользователь: вернет корзину авторизованного пользователя
             return queryset.filter(user_id=self.request.user)
 
-    def get(self, request, *args, **kwargs):
-        '''
-        Получить список корзин пользователей с их содержимым
-        '''
-        basket = self.get_queryset()
-        serializer = self.serializer_class(basket, many=True)
-        return Response(list(serializer.data))
+    # def get(self, request, *args, **kwargs):
+    #     '''
+    #     Получить список корзин пользователей с их содержимым
+    #     '''
+    #     basket = self.get_queryset()
+    #     serializer = self.serializer_class(basket, many=True)
+    #     return Response(list(serializer.data))
 
 
 class BasketDetailViewSet(GenericAPIView):
@@ -60,11 +64,7 @@ class BasketDetailViewSet(GenericAPIView):
         '''
         Добавить в корзину товар
         '''
-        try:
-            basket = Basket.objects.get(user_id=self.request.user)
-        except Basket.DoesNotExist:
-            return Http404
-
+        basket = self.get_queryset()
         serializer = self.serializer_class(data=self.request.data, context={'basket': basket})
         if serializer.is_valid():
             serializer.save()
