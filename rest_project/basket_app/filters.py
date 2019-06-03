@@ -6,4 +6,4 @@ class BasketFilter(django_filters.FilterSet):
 
     class Meta:
         model = Basket
-        fields = ['id', 'user_id', 'products']
+        fields = ['id', 'user_id']
