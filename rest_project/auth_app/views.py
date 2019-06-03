@@ -19,7 +19,9 @@ User = get_user_model()
 
 
 class UserListViewSet(GenericAPIView):
-    '''Упревление пользователями'''
+    '''
+    Упревление пользователями
+    '''
     permission_classes = [POSTOrNotForUsers, ]
     serializer_class = UsersSerializer
     filter_backends = (DjangoFilterBackend,)
@@ -41,7 +43,9 @@ class UserListViewSet(GenericAPIView):
         return Response(list(serializer.data))
 
     def post(self, request, *args, **kwargs):
-        '''Создать пользователя'''
+        '''
+        Создать пользователя
+        '''
         serializer = self.serializer_class(data=self.request.data)
         if serializer.is_valid(raise_exception=True):
             serializer.save()
@@ -56,7 +60,9 @@ class UserListViewSet(GenericAPIView):
 
 
 class UserDetailViewSet(GenericAPIView):
-    '''Управление пользователем'''
+    '''
+    Управление пользователем
+    '''
     permission_classes = [IsAuthenticated, ]
     serializer_class = UsersUpdateSerializer
 
@@ -69,13 +75,17 @@ class UserDetailViewSet(GenericAPIView):
             raise Http404
 
     def get(self, request, *args, **kwargs):
-        '''Получить детализацию по пользователю'''
+        '''
+        Получить детализацию по пользователю
+        '''
         user = self.get_queryset()
         serializer = self.serializer_class(user)
         return Response(dict(serializer.data))
 
     def put(self, request, *args, **kwargs):
-        '''Изменить пользователя'''
+        '''
+        Изменить пользователя
+        '''
         instance = self.get_queryset()
         serializer = self.serializer_class(instance, data=self.request.data, partial=True)
         if serializer.is_valid(raise_exception=True):
@@ -84,7 +94,9 @@ class UserDetailViewSet(GenericAPIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def delete(self, request, *args, **kwargs):
-        '''Удалить пользователя'''
+        '''
+        Удалить пользователя
+        '''
         user = self.get_queryset()
         user.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
