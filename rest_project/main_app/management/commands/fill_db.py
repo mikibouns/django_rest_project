@@ -17,7 +17,7 @@ class Command(BaseCommand):
     def create_db(self):
         '''создает базу данных и миграции'''
         try:
-            call('python manage.py makemigrations && python manage.py migrate', shell=True)
+            call('python manage.py makemigrations && python manage.py migrate && python manage.py collectstatic', shell=True)
         except Exception as e:
             print(e)
 
