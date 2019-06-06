@@ -19,7 +19,7 @@ class APIRootView(APIView):
                 'comments': 'Swagger документация к API'
             },
             {
-                'api_url': 'http://127.0.0.1:8000/api/v1/drf_api_docs/',
+                'api_url': '{}api/v1/drf_api_docs/'.format(request.build_absolute_uri()),
                 'method': 'get',
                 'comments': 'DRF документация к API'
             },
